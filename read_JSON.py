@@ -20,8 +20,9 @@ def filter_msg_content(df):
     """
     Creates new df skipping action messages, returning the messages while skipping over all NotANumber values
     :param df: A dataframe of message JSON file
-    :return:
+    :return: Column of only the messages from the dataframe
     """
+    # Creates a copy of the df removing the following phrases within the content column
     content_df = df.loc[
         df['content'].str.contains("sent an attachment.|shared a story.|Liked a message|Reacted|to your message") == False].copy()
     content_df['content'].dropna(inplace=True)  # Skips all NotANumber values
@@ -29,12 +30,11 @@ def filter_msg_content(df):
     return content_column
 
 
-def five_most_common_words(input_path):
+def five_most_common_words(df: pd.DataFrame):
     """
     Prints a dataframe with the 5 most common words and their counts.
-    :param input_path: A Path object of a path to a message JSON file
+    :param df: A Dataframe object containing the data from the messages with a user
     """
-    df = create_msg_df(input_path)
     content_column = filter_msg_content(df)
 
     # Creates and prints a list of tuples with the five most common words and their counts
@@ -43,25 +43,32 @@ def five_most_common_words(input_path):
     return f'\nYour Five Most Common Words: \n{common_word_df}'
 
 
-def get_message_df_length(input_path):
+def get_message_df_length(df):
     """
     Get the number of messages sent within a DM conversation.
-    :param input_path: A Path object of a path to a message JSON file
-    :return:
+    :param df: A Dataframe object containing the data from the messages with a user
+    :return: F-string containing the amount of messages in a conversation excluding action statements
     """
-    df = create_msg_df(input_path)
     content_column = filter_msg_content(df)
     return f'The number of messages in the conversation: \n{content_column.size}'
+
+
+def get_first_five_messages(df):
+    content_df = df.loc[
+        df['content'].str.contains(
+            "sent an attachment.|shared a story.|Liked a message|Reacted|to your message") == False].copy()
+    content_df['content'].dropna(inplace=True)
 
 
 def message_data():
     print('\nWelcome To The Message Data Section!')
     print('--------------------------------------')
-    # print()
     try:
         file_path = input('Please input path to message data file, ending in .json: ')
-        print(five_most_common_words(file_path))
+        df = create_msg_df(file_path)
+
+        print(five_most_common_words(df))
         print()
-        print(get_message_df_length(file_path))
+        print(get_message_df_length(df))
     except FileNotFoundError:
         print('\nERROR: The given directory does not exist or is not a valid path')
