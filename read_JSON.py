@@ -55,10 +55,13 @@ def get_message_df_length(input_path):
 
 
 def message_data():
+    print('\nWelcome To The Message Data Section!')
+    print('--------------------------------------')
+    # print()
     try:
         file_path = input('Please input path to message data file, ending in .json: ')
         print(five_most_common_words(file_path))
         print()
         print(get_message_df_length(file_path))
     except FileNotFoundError:
-        print('ERROR: The given directory does not exist or is not a valid path')
+        print('\nERROR: The given directory does not exist or is not a valid path')
