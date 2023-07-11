@@ -67,7 +67,7 @@ def decode_messages(messages):
     return decoded_messages
 
 
-def format_timestamps(timestamps):
+def format_timestamps_ms(timestamps):
     """
     Format timestamps from milliseconds to a proper date format.
     :param timestamps: Series containing the timestamps to be formatted
@@ -96,7 +96,7 @@ def get_first_five_messages(df):
 
     # Decode messages & format timestamps
     reversed_filtered_df_head['content'] = decode_messages(reversed_filtered_df_head['content'])
-    reversed_filtered_df_head['timestamp_ms'] = format_timestamps(reversed_filtered_df_head['timestamp_ms'])
+    reversed_filtered_df_head['timestamp_ms'] = format_timestamps_ms(reversed_filtered_df_head['timestamp_ms'])
 
     # Renaming columns to fit new changes
     reversed_filtered_df_head.rename(columns={
