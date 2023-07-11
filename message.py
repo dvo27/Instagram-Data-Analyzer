@@ -2,6 +2,7 @@ import json
 import datetime
 from collections import Counter
 import pandas as pd
+import main
 
 
 def create_msg_df(input_path):
@@ -42,6 +43,7 @@ def five_most_common_words(df: pd.DataFrame):
     # Creates and prints a list of tuples with the five most common words and their counts
     common_word_counter = Counter(" ".join(content_column).split()).most_common(5)
     common_word_df = pd.DataFrame(common_word_counter, columns=['Word', 'Count'])
+    common_word_df = common_word_df.to_string(index=False)
     return f'\nYour Five Most Common Words: \n{common_word_df}'
 
 
@@ -83,6 +85,7 @@ def get_first_five_messages(df):
     :param df: A DataFrame object containing the data from the messages with a user
     :return: F-string containing a DataFrame string of the first five messages
     """
+    # Filter df from any action statements and remove any NotANumber values
     filtered_df = df.loc[
         df['content'].str.contains(
             "sent an attachment.|shared a story.|Liked a message|Reacted|to your message|liked a message") == False].copy()
@@ -91,10 +94,8 @@ def get_first_five_messages(df):
     # Get first five messages and reverse the order
     reversed_filtered_df_head = filtered_df.tail(5)[['sender_name', 'timestamp_ms', 'content']].iloc[::-1]
 
-    # Decode messages
+    # Decode messages & format timestamps
     reversed_filtered_df_head['content'] = decode_messages(reversed_filtered_df_head['content'])
-
-    # Format timestamps
     reversed_filtered_df_head['timestamp_ms'] = format_timestamps(reversed_filtered_df_head['timestamp_ms'])
 
     # Renaming columns to fit new changes
@@ -107,12 +108,17 @@ def get_first_five_messages(df):
 
 def message_data():
     print('\nWelcome To The Message Data Section!')
-    print('--------------------------------------')
+    print('------------------------------------')
+    print('To return to the main menu please type "return"')
     try:
-        file_path = input('Please input path to message data file, ending in .json: ')
-        df = create_msg_df(file_path)
-        print(five_most_common_words(df))
-        print(get_message_df_length(df))
-        print(get_first_five_messages(df))
+        file_path = input('\nPlease input path to message data file, ending in .json: \n')
+        if file_path != 'return':
+            df = create_msg_df(file_path)
+            print(five_most_common_words(df))
+            print(get_first_five_messages(df))
+            print(get_message_df_length(df))
+        else:
+            print()
+            main.main()
     except FileNotFoundError:
         print('\nERROR: The given directory does not exist or is not a valid path')
