@@ -111,12 +111,13 @@ def message_data():
     print('------------------------------------')
     print('To return to the main menu please type "return"')
     try:
-        file_path = input('\nPlease input path to message data file, ending in .json: \n')
+        file_path = input('\nPlease enter the path to a file in /messages/inbox/ ending in .json: \n')
         if file_path != 'return':
             df = create_msg_df(file_path)
             print(five_most_common_words(df))
             print(get_first_five_messages(df))
             print(get_message_df_length(df))
+            message_data()
         else:
             print()
             main.main()

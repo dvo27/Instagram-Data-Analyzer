@@ -1,16 +1,14 @@
 import json
 import pandas as pd
 import datetime
-
-file_input = input('give me following file: ')
-
+import main
 
 
 def create_follower_df(path_input):
     with open(path_input, encoding='utf-8') as f:
         following_json = json.load(f)
-    following_data = [f['string_list_data'][0] for f in following_json['relationships_following']]
-    df = pd.DataFrame(following_data)
+    following_data_list = [f['string_list_data'][0] for f in following_json['relationships_following']]
+    df = pd.DataFrame(following_data_list)
     return df
 
 
@@ -31,6 +29,30 @@ def first_five_following(df):
     return f'\nYour First Five Followings: \n{first_five_head}\n'
 
 
-follower_df = create_follower_df(file_input)
+def following_data():
+    try:
+        file_input = input('Enter path to followers_and_following/following.json file: \n')
 
-print(first_five_following(follower_df))
+        follower_df = create_follower_df(file_input)
+        print(first_five_following(follower_df))
+    except FileNotFoundError:
+        print('\nERROR: The given directory does not exist or is not a valid path')
+
+
+def follow_data():
+    print('\nWelcome To The Follow Data Section!')
+    print('------------------------------------')
+    menu_choice = input('\nPlease choose an option below!:'
+                        '\n[1] : Get Following Data\n'
+                        '[return] : Return to main menu\n'
+                        '-------------------------------------\n')
+    while menu_choice != 'return':
+        if menu_choice == '1':
+            following_data()
+            follow_data()
+        else:
+            print('ERROR: Invalid choice')
+            follow_data()
+    else:
+        print()
+        main.main()
