@@ -2,6 +2,7 @@ import sys
 import message as msg
 import followers as follow
 
+
 def main():
     valid_options = ['1', '2', 'Q', 'q']
 

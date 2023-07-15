@@ -59,7 +59,7 @@ def get_message_df_length(df):
 
 def decode_messages(messages):
     """
-    Decode messages from their original encoding to UTF-8.
+    Decode words from their original encoding to UTF-8.
     :param messages: Series containing the messages to be decoded
     :return: Decoded messages
     """
@@ -97,6 +97,7 @@ def get_first_five_messages(df):
     # Decode messages & format timestamps
     reversed_filtered_df_head['content'] = decode_messages(reversed_filtered_df_head['content'])
     reversed_filtered_df_head['timestamp_ms'] = format_timestamps_ms(reversed_filtered_df_head['timestamp_ms'])
+    reversed_filtered_df_head['sender_name'] = decode_messages(reversed_filtered_df_head['sender_name'])
 
     # Renaming columns to fit new changes
     reversed_filtered_df_head.rename(columns={
