@@ -1,7 +1,7 @@
 import json
-import datetime
 from collections import Counter
 import pandas as pd
+from matplotlib import pyplot as plt
 import main
 
 
@@ -18,9 +18,25 @@ def create_msg_df(input_path):
     return df
 
 
-def filter_msg_content(df):
+def plot_message_data_graph(df):
+    # Filter out dataframe for only messages, timestamps, and sender names
+    df = df.loc[:, ['content', 'timestamp_ms', 'sender_name']]
+
+    # Remove all NaN elements, correctly encode messages, & convert timestamps
+    df.dropna(inplace=True)
+    df['content'] = decode_messages(df['content'])
+    df['timestamp_ms'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
+
+    # Plot figure
+    plt.figure(figsize=(8, 8))
+    df["sender_name"].value_counts().plot(kind='pie', autopct='%1.2f%%', shadow=True,
+                                          fontsize=15.0, title='Percentage of sent texts in conversation')
+    plt.show()
+
+
+def filter_msg_content(df: pd.DataFrame):
     """
-    Creates new df skipping action messages, returning the messages while skipping over all NotANumber values
+    Creates new DF skipping action messages, returning the messages while skipping over all NotANumber values
     :param df: A dataframe of message JSON file
     :return: Column of only the messages from the dataframe
     """
@@ -47,7 +63,7 @@ def five_most_common_words(df: pd.DataFrame):
     return f'\nYour Five Most Common Words: \n{common_word_df}'
 
 
-def get_message_df_length(df):
+def get_message_df_length(df: pd.DataFrame):
     """
     Get the number of messages sent within a DM conversation.
     :param df: A Dataframe object containing the data from the messages with a user
@@ -57,7 +73,7 @@ def get_message_df_length(df):
     return f'\nNumber Of Messages In The Conversation: \n{content_column.size}'
 
 
-def decode_messages(messages):
+def decode_messages(messages: pd.Series):
     """
     Decode words from their original encoding to UTF-8.
     :param messages: Series containing the messages to be decoded
@@ -65,17 +81,6 @@ def decode_messages(messages):
     """
     decoded_messages = messages.apply(lambda message: message.encode('latin-1').decode('utf-8'))
     return decoded_messages
-
-
-def format_timestamps_ms(timestamps):
-    """
-    Format timestamps from milliseconds to a proper date format.
-    :param timestamps: Series containing the timestamps to be formatted
-    :return: Formatted timestamps
-    """
-    formatted_timestamps = timestamps.apply(lambda time: datetime.datetime.fromtimestamp(time / 1000)
-                                            .strftime('%m-%d-%Y %H:%M'))
-    return formatted_timestamps
 
 
 def get_first_five_messages(df):
@@ -96,7 +101,7 @@ def get_first_five_messages(df):
 
     # Decode messages & format timestamps
     reversed_filtered_df_head['content'] = decode_messages(reversed_filtered_df_head['content'])
-    reversed_filtered_df_head['timestamp_ms'] = format_timestamps_ms(reversed_filtered_df_head['timestamp_ms'])
+    reversed_filtered_df_head['timestamp_ms'] = pd.to_datetime(reversed_filtered_df_head['timestamp_ms'], unit='ms')
     reversed_filtered_df_head['sender_name'] = decode_messages(reversed_filtered_df_head['sender_name'])
 
     # Renaming columns to fit new changes
@@ -118,6 +123,7 @@ def message_data():
             print(five_most_common_words(df))
             print(get_first_five_messages(df))
             print(get_message_df_length(df))
+            plot_message_data_graph(df)
             message_data()
         else:
             print()

@@ -11,6 +11,11 @@ class User:
 
 
 def create_following_df(path_input):
+    """
+    Creates a Dataframe from the following.json file.
+    :param path_input: Path to the following.json file.
+    :return: Dataframe containing the following data.
+    """
     try:
         with open(path_input, encoding='utf-8') as f:
             following_json = json.load(f)
@@ -24,6 +29,11 @@ def create_following_df(path_input):
 
 
 def create_follower_df(path_input):
+    """
+    Creates a DataFrame from the follower_1.json file.
+    :param path_input: Path to the follower JSON file.
+    :return: DataFrame containing the follower data.
+    """
     try:
         with open(path_input, encoding='utf-8') as f:
             follower_json = json.load(f)
@@ -37,16 +47,34 @@ def create_follower_df(path_input):
 
 
 def sort_df_time(df):
+    """
+    Sorts a DataFrame based on the 'timestamp' column.
+
+    :param df: DataFrame to be sorted.
+    :return: Sorted DataFrame.
+    """
     return df.sort_values(by=['timestamp'])
 
 
 def format_timestamp(timestamps):
+    """
+    Formats timestamps in a Series to a specific date-time format.
+
+    :param timestamps: Series of timestamps.
+    :return: Formatted timestamps as Series.
+    """
     formatted_timestamps = timestamps.apply(
         lambda time: datetime.datetime.fromtimestamp(time).strftime('%m-%d-%Y %H:%M'))
     return formatted_timestamps
 
 
 def first_five_following(df):
+    """
+    Retrieves the first five followings from a DataFrame and formats the timestamps.
+
+    :param df: DataFrame containing following data.
+    :return: F-string with the first five followings.
+    """
     first_five_head = sort_df_time(df).head()
     first_five_head['timestamp'] = format_timestamp(first_five_head['timestamp'])
     first_five_head = first_five_head.to_string()
@@ -54,6 +82,12 @@ def first_five_following(df):
 
 
 def recent_five_following(df):
+    """
+    Retrieves the most recent five followings from a DataFrame and formats the timestamps.
+
+    :param df: DataFrame containing following data.
+    :return: F-string with the most recent five followings.
+    """
     first_five_head = sort_df_time(df).tail()
     first_five_head['timestamp'] = format_timestamp(first_five_head['timestamp'])
     first_five_head = first_five_head.to_string()
@@ -61,6 +95,11 @@ def recent_five_following(df):
 
 
 def following_data():
+    """
+    Retrieves and displays following data.
+
+    Asks for the path to the 'following.json' file and displays the first five and most recent five followings.
+    """
     try:
         file_input = input('Please enter path to followers_and_following/following.json file: \n')
 
@@ -72,6 +111,12 @@ def following_data():
 
 
 def not_following_back():
+    """
+    Displays users who are not following the user back.
+
+    Asks for the paths to the 'followers_1.json' and 'following.json' files.
+    Displays the users who are not following back based on the data in these files.
+    """
     try:
         followers_path = input('Please enter the path to followers_and_following/followers_1.json: \n')
         following_path = input('Please enter path to followers_and_following/following.json file: \n')
