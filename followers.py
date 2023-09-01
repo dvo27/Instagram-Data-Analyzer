@@ -4,12 +4,6 @@ import datetime
 import main
 
 
-class User:
-    def __init__(self):
-        self.followers_path = None
-        self.following_path = None
-
-
 def create_following_df(path_input):
     """
     Creates a Dataframe from the following.json file.

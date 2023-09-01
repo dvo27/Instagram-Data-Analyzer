@@ -1,7 +1,8 @@
 import json
-from collections import Counter
 import pandas as pd
+import seaborn as sns
 from matplotlib import pyplot as plt
+from collections import Counter
 import main
 
 
@@ -15,17 +16,32 @@ def create_msg_df(input_path):
         message_json = json.load(message_file)
     messages_dict = message_json['messages']
     df = pd.DataFrame.from_dict(messages_dict)
+    df['timestamp_ms'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
     return df
 
 
-def plot_message_data_graph(df):
+def decode_messages(messages: pd.Series):
+    """
+    Decode words from their original encoding to UTF-8.
+    :param messages: Series containing the messages to be decoded
+    :return: Decoded messages series
+    """
+    decoded_messages = messages.apply(lambda message: message.encode('latin-1').decode('utf-8'))
+    return decoded_messages
+
+
+def plot_message_distribution_graph(df: pd.DataFrame):
+    """
+    Plots a pie chart showing the distribution of chats sent between each participant
+    of a direct message conversation
+    :param df: A Pandas Dataframe of an Instagram direct message JSON file
+    """
     # Filter out dataframe for only messages, timestamps, and sender names
     df = df.loc[:, ['content', 'timestamp_ms', 'sender_name']]
 
     # Remove all NaN elements, correctly encode messages, & convert timestamps
     df.dropna(inplace=True)
     df['content'] = decode_messages(df['content'])
-    df['timestamp_ms'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
 
     # Plot figure
     plt.figure(figsize=(8, 8))
@@ -34,10 +50,70 @@ def plot_message_data_graph(df):
     plt.show()
 
 
+def plot_message_heatmap(df: pd.DataFrame):
+    """
+    Plots a heatmap showing the number of messages sent between each hour of the day
+    across all months of a year
+    :param df: A Pandas Dataframe of an Instagram direct message JSON file
+    """
+    time_data = df.copy()
+
+    # drop columns we don't need
+    time_data.drop(["share", "reactions", "photos", "audio_files", "videos"], axis=1, inplace=True, errors='ignore')
+
+    # drop rows where timestamp_ms is NaN
+    time_data.dropna(subset=['timestamp_ms'], inplace=True)
+
+    # convert timestamp_ms to datetime if it is not already
+    if not pd.api.types.is_datetime64_any_dtype(time_data['timestamp_ms']):
+        time_data['timestamp_ms'] = pd.to_datetime(time_data['timestamp_ms'], unit='ms')
+
+    # convert timezone
+    time_data['timestamp_ms'] = time_data['timestamp_ms'].dt.tz_localize('UTC').dt.tz_convert('US/Pacific')
+
+    time_data['month'] = time_data['timestamp_ms'].dt.month
+    time_data['hour'] = time_data['timestamp_ms'].dt.hour
+
+    # count messages using timestamp_ms column
+    df_heatmap = time_data.groupby(['hour', 'month'])['timestamp_ms'].count().reset_index()
+    df_heat2 = df_heatmap.pivot(index="hour", columns="month", values="timestamp_ms")
+    df_heat2 = df_heat2.fillna(0)
+
+    # configure plot settings and plot
+    fig, ax = plt.subplots(figsize=(12, 9))
+    cmap = sns.cubehelix_palette(as_cmap=True, reverse=True)
+    cmap.set_bad(color="gray")
+    sns.heatmap(df_heat2, cmap=cmap, mask=df_heat2.isnull(), annot=True, fmt='g')
+    plt.title('Number of Texts Per Hour Each Month', size=14)
+    plt.show()
+
+
+def plot_message_time_series(df: pd.DataFrame):
+    """
+    Plots a time series graph of the number of messages sent per day across chat history
+    :param df: A Pandas Dataframe of an Instagram direct message JSON file
+    """
+    time_data = df.copy()
+    time_data.dropna(inplace=True)
+    time_data.drop(["share", "reactions", "photos", "audio_files", "videos"], axis=1, inplace=True, errors='ignore')
+    time_data['date'] = pd.to_datetime(df.timestamp_ms).dt.date
+    daily_counts = time_data.groupby('date').size()
+
+    # configure plot settings and plot
+    plt.figure(figsize=(12, 6))
+    plt.plot(daily_counts.index, daily_counts.values)
+    plt.xlabel('Date')
+    plt.ylabel('Number of Messages')
+    plt.title('Number of Messages Sent Each Day')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+
 def filter_msg_content(df: pd.DataFrame):
     """
     Creates new DF skipping action messages, returning the messages while skipping over all NotANumber values
-    :param df: A dataframe of message JSON file
+    :param df: A Pandas Dataframe of an Instagram direct message JSON file
     :return: Column of only the messages from the dataframe
     """
     # Creates a copy of the df removing the following phrases within the content column
@@ -52,7 +128,7 @@ def filter_msg_content(df: pd.DataFrame):
 def five_most_common_words(df: pd.DataFrame):
     """
     Prints a dataframe with the 5 most common words and their counts.
-    :param df: A Dataframe object containing the data from the messages with a user
+    :param df: A Pandas Dataframe of an Instagram direct message JSON file
     """
     content_column = filter_msg_content(df)
 
@@ -66,28 +142,18 @@ def five_most_common_words(df: pd.DataFrame):
 def get_message_df_length(df: pd.DataFrame):
     """
     Get the number of messages sent within a DM conversation.
-    :param df: A Dataframe object containing the data from the messages with a user
+    :param df: A Pandas Dataframe of an Instagram direct message JSON file
     :return: F-string containing the amount of messages in a conversation excluding action statements
     """
     content_column = filter_msg_content(df)
     return f'\nNumber Of Messages In The Conversation: \n{content_column.size}'
 
 
-def decode_messages(messages: pd.Series):
-    """
-    Decode words from their original encoding to UTF-8.
-    :param messages: Series containing the messages to be decoded
-    :return: Decoded messages
-    """
-    decoded_messages = messages.apply(lambda message: message.encode('latin-1').decode('utf-8'))
-    return decoded_messages
-
-
-def get_first_five_messages(df):
+def get_first_five_messages(df: pd.DataFrame):
     """
     Gets the first five messages in a DM conversation and shows each sender and the timestamp
     along with their message.
-    :param df: A DataFrame object containing the data from the messages with a user
+    :param df: A Pandas Dataframe of an Instagram direct message JSON file
     :return: F-string containing a DataFrame string of the first five messages
     """
     # Filter df from any action statements and remove any NotANumber values
@@ -123,7 +189,9 @@ def message_data():
             print(five_most_common_words(df))
             print(get_first_five_messages(df))
             print(get_message_df_length(df))
-            plot_message_data_graph(df)
+            plot_message_distribution_graph(df)
+            plot_message_heatmap(df)
+            plot_message_time_series(df)
             message_data()
         else:
             print()
