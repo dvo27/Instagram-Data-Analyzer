@@ -119,7 +119,7 @@ def filter_msg_content(df: pd.DataFrame):
     # Creates a copy of the df removing the following phrases within the content column
     content_df = df.loc[
         df['content'].str.contains(
-            "sent an attachment.|shared a story.|Liked a message|Reacted|to your message") is False].copy()
+            "sent an attachment.|shared a story.|Liked a message|Reacted|to your message") == False].copy()
     content_df['content'].dropna(inplace=True)  # Skips all NotANumber values
     content_column = content_df['content']  # Returns the content column of the newly copied dataframe
     return content_column
@@ -159,7 +159,7 @@ def get_first_five_messages(df: pd.DataFrame):
     # Filter df from any action statements and remove any NotANumber values
     filtered_df = df.loc[
         df['content'].str.contains(
-            "sent an attachment.|shared a story.|Liked a message|Reacted|to your message|liked a message") is False].copy()
+            "sent an attachment.|shared a story.|Liked a message|Reacted|to your message|liked a message") == False].copy()
     filtered_df['content'].dropna(inplace=True)
 
     # Get first five messages and reverse the order

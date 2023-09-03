@@ -21,9 +21,6 @@ import followers as follow
 import comments as cmt
 
 
-IG_DATA = None
-FIRST_RUN = False
-
 class InstagramData:
     """
     A class to represent the Instagram data.
@@ -100,15 +97,13 @@ def test_and_init():
 
     :return: None
     """
-    global IG_DATA
-    global FIRST_RUN
-
-    FIRST_RUN = True
     main_path = input('Please put in the path to your Instagram Data: \n')
-    IG_DATA = InstagramData(main_path)
-    IG_DATA.init_paths()
-    IG_DATA.check_paths()
-    print(f'test and init first_run: {FIRST_RUN}')
+    instagram_data_obj = InstagramData(main_path)
+    instagram_data_obj.init_paths()
+    instagram_data_obj.check_paths()
+
+    return instagram_data_obj
+
 
 
 def main():
@@ -128,6 +123,7 @@ def main():
 
     :return: None
     """
+    
     valid_options = ['1', '2', 'Q', 'q']
     menu_choice = input('\nPlease choose an option below!:'
                         '\n[1] : Get DMs With Specific User Data\n'
@@ -143,7 +139,7 @@ def main():
         if menu_choice == '1':
             msg.message_data()
         elif menu_choice == '2':
-            follow.follow_data()
+            follow.follow_data(ig_data)
         elif menu_choice == '3':
             cmt.comment_menu()
         elif menu_choice == 'Q' or 'q':
@@ -152,5 +148,5 @@ def main():
 
 
 if __name__ == '__main__':
-    test_and_init()
+    ig_data = test_and_init()
     main()

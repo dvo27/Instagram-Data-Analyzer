@@ -4,7 +4,7 @@ import datetime
 import main
 
 
-def create_following_df(path_input):
+def create_following_df(path_input, instagram_data):
     """
     Creates a Dataframe from the following.json file.
     :param path_input: Path to the following.json file.
@@ -20,10 +20,10 @@ def create_following_df(path_input):
     except (AttributeError, TypeError) as f:
         print(f'\nERROR: {f}')
         print('\nERROR: Please place the following.json file located in the followers_and_following folder')
-        follow_data()
+        follow_data(instagram_data)
 
 
-def create_follower_df(path_input):
+def create_follower_df(path_input, instagram_data):
     """
     Creates a DataFrame from the follower_1.json file.
     :param path_input: Path to the follower JSON file.
@@ -38,7 +38,7 @@ def create_follower_df(path_input):
     except (AttributeError, TypeError) as f:
         print(f'\nERROR: {f}')
         print('\nPlease place the follower_1.json file located in the followers_and_following folder')
-        follow_data()
+        follow_data(instagram_data)
 
 
 def sort_df_time(df):
@@ -91,55 +91,40 @@ def recent_five_following(df):
     return f'\nYour Most Recent Five Followings: \n{first_five_head}\n'
 
 
-def following_data():
+def following_data(instagram_data):
     """
     Retrieves and displays following data.
 
     Asks for the path to the 'following.json' file and displays the first five and most recent five followings.
     """
-    try:
-        file_input = input(
-            'Please enter path to followers_and_following/following.json file: \n')
-
-        follower_df = create_following_df(file_input)
-        print(first_five_following(follower_df))
-        print(recent_five_following(follower_df))
-    except FileNotFoundError:
-        print('\nERROR: The given directory does not exist or is not a valid path')
+    follower_df = create_following_df(instagram_data.following_path, instagram_data)
+    print(first_five_following(follower_df))
+    print(recent_five_following(follower_df))
 
 
-def not_following_back():
+def not_following_back(instagram_data):
     """
     Displays users who are not following the user back.
 
     Asks for the paths to the 'followers_1.json' and 'following.json' files.
     Displays the users who are not following back based on the data in these files.
     """
-    try:
-        followers_path = input(
-            'Please enter the path to followers_and_following/followers_1.json: \n')
-        following_path = input(
-            'Please enter path to followers_and_following/following.json file: \n')
+    follower_df = create_follower_df(instagram_data.followers_path, instagram_data)[['href', 'value']]
+    following_df = create_following_df(instagram_data.following_path, instagram_data)[['href', 'value']]
 
-        follower_df = create_follower_df(followers_path)[['href', 'value']]
-        following_df = create_following_df(following_path)[['href', 'value']]
+    non_follow_back_df = follower_df.merge(following_df.drop_duplicates(), on=[
+                                            'href', 'value'], how='right', indicator=True)
+    non_follow_back_df = non_follow_back_df[non_follow_back_df['_merge'] == 'right_only'][[
+        'href', 'value']]
+    non_follow_back_df.rename(columns={
+        'href': 'Profile Link', 'value': 'Username'}, inplace=True)
+    non_follow_back_df = non_follow_back_df.to_string()
 
-        non_follow_back_df = follower_df.merge(following_df.drop_duplicates(), on=[
-                                               'href', 'value'], how='right', indicator=True)
-        non_follow_back_df = non_follow_back_df[non_follow_back_df['_merge'] == 'right_only'][[
-            'href', 'value']]
-        non_follow_back_df.rename(columns={
-            'href': 'Profile Link', 'value': 'Username'}, inplace=True)
-        non_follow_back_df = non_follow_back_df.to_string()
-
-        print('\nUsers Not Following You Back:')
-        print(non_follow_back_df)
-
-    except FileNotFoundError:
-        print('\nERROR: The given directory does not exist or is not a valid path')
+    print('\nUsers Not Following You Back:')
+    print(non_follow_back_df)
 
 
-def follow_data():
+def follow_data(instagram_data):
     print('\nWelcome To The Follow Data Section!')
     print('------------------------------------')
     menu_choice = input('\nPlease choose an option below!:'
@@ -149,13 +134,13 @@ def follow_data():
                         '-------------------------------------\n')
     while menu_choice != 'return':
         if menu_choice == '1':
-            following_data()
-            follow_data()
+            following_data(instagram_data)
+            follow_data(instagram_data)
         elif menu_choice == '2':
-            not_following_back()
-            follow_data()
+            not_following_back(instagram_data)
+            follow_data(instagram_data)
         else:
             print('ERROR: Invalid choice')
-            follow_data()
+            follow_data(instagram_data)
     print()
     main.main()
