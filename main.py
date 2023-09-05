@@ -49,11 +49,11 @@ class InstagramData:
         :type main_path: str
         """
         self.main_path = main_path
-        self.post_comments_path = None
         self.followers_path = None
         self.following_path = None
         self.liked_comments = None
         self.liked_posts = None
+        self.post_comments = None
         self.reported_comments = None
         self.reels_comments = None
 
@@ -65,11 +65,11 @@ class InstagramData:
 
         :return: None
         """
-        self.post_comments_path = Path(self.main_path + '/comments/post_comments.json')
         self.followers_path = Path(self.main_path + '/followers_and_following/followers_1.json')
         self.following_path = Path(self.main_path + '/followers_and_following/following.json')
         self.liked_comments = Path(self.main_path + '/likes/liked_comments.json')
         self.liked_posts = Path(self.main_path + '/likes/liked_posts.json')
+        self.post_comments = Path(self.main_path + '/comments/post_comments.json')
         self.reported_comments = Path(self.main_path + '/comments/comments_reported.json')
         self.reels_comments = Path(self.main_path + '/comments/reels_comments.json')
 
@@ -82,8 +82,8 @@ class InstagramData:
         :return: None
         :raise FileNotFoundError: If any initialized path does not exist.
         """
-        paths = [self.post_comments_path, self.followers_path, self.following_path,
-                 self.liked_comments, self.liked_posts]
+        paths = [self.followers_path, self.following_path, self.liked_comments, self.liked_posts,
+                 self.post_comments, self.reported_comments, self.reels_comments]
         print()
         for path in paths:
             if path and path.exists():

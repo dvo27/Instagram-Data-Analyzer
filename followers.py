@@ -166,7 +166,7 @@ def follow_data(instagram_data):
             not_following_back(instagram_data)
             follow_data(instagram_data)
         else:
-            print('ERROR: Invalid choice')
+            print('ERROR: Invalid choice, please try again')
             follow_data(instagram_data)
     print()
     main.main()
