@@ -54,6 +54,8 @@ class InstagramData:
         self.following_path = None
         self.liked_comments = None
         self.liked_posts = None
+        self.reported_comments = None
+        self.reels_comments = None
 
 
     def init_paths(self):
@@ -68,6 +70,8 @@ class InstagramData:
         self.following_path = Path(self.main_path + '/followers_and_following/following.json')
         self.liked_comments = Path(self.main_path + '/likes/liked_comments.json')
         self.liked_posts = Path(self.main_path + '/likes/liked_posts.json')
+        self.reported_comments = Path(self.main_path + '/comments/comments_reported.json')
+        self.reels_comments = Path(self.main_path + '/comments/reels_comments.json')
 
 
     def check_paths(self):
@@ -123,8 +127,8 @@ def main():
 
     :return: None
     """
-    
-    valid_options = ['1', '2', 'Q', 'q']
+
+    valid_options = ['1', '2', '3', 'Q', 'q']
     menu_choice = input('\nPlease choose an option below!:'
                         '\n[1] : Get DMs With Specific User Data\n'
                         '[2] : Get Follow Data\n'
@@ -141,7 +145,7 @@ def main():
         elif menu_choice == '2':
             follow.follow_data(ig_data)
         elif menu_choice == '3':
-            cmt.comment_menu()
+            cmt.comment_menu(ig_data)
         elif menu_choice == 'Q' or 'q':
             print('\nEnding program...Goodbye!')
             sys.exit()

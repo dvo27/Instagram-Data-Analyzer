@@ -1,8 +1,29 @@
+"""
+Message Analysis Module
+
+This module provides a collection of functions to process, analyze, 
+and visualize Instagram direct messages (DMs) from JSON files. Main features include:
+- Loading and processing message JSON files into a Pandas DataFrame.
+- Decoding messages from their original encoding to UTF-8.
+- Generating various visualizations of the messages, such as:
+    - A pie chart illustrating the distribution of chats between participants.
+    - A heatmap showing message frequency for each hour across months.
+    - A time series graph for daily message counts.
+- Extracting message content while filtering out system-generated content and actions.
+- Providing summaries like the five most common words used in messages.
+- Interactively prompting users for a JSON file and shows available analyses and visualizations.
+This module depends on several external libraries including pandas, seaborn, and matplotlib. 
+Additionally, it relies on the 'main' module for certain operations.
+
+Note: To ensure correct execution, the provided JSON file should adhere to a specific structure,
+especially when keys like 'messages' are accessed directly.
+"""
+
 import json
+from collections import Counter
 import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
-from collections import Counter
 import main
 
 
@@ -188,7 +209,7 @@ def message_data():
     print('To return to the main menu please type "return"')
     try:
         file_path = input('\nPlease enter the path to a file in /messages/inbox/ ending in .json: \n')
-        if file_path != 'return':
+        if file_path != 'return' and file_path.endswith('.json'):
             df = create_msg_df(file_path)
             print(five_most_common_words(df))
             print(get_first_five_messages(df))
@@ -200,5 +221,8 @@ def message_data():
         else:
             print()
             main.main()
-    except FileNotFoundError:
-        print('\nERROR: The given directory does not exist or is not a valid path')
+    except (FileNotFoundError, json.JSONDecodeError):
+        print('\nERROR: The given file path does not exist or is not a valid path')
+        print('Please check the inputted directory path')
+
+

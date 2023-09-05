@@ -1,6 +1,31 @@
+"""
+This module contains functions for analyzing Instagram following data.
+
+The module includes functions to:
+- Create pandas DataFrames from Instagram 'following' and 'followers' JSON files.
+- Sort a DataFrame based on the 'timestamp' column.
+- Format timestamps in a pandas Series to a specific date-time format.
+- Retrieve and display the first and most recent five followings from a DataFrame.
+- Display users who are not following the user back based on the followers and following DataFrames.
+
+The main function, follow_data(), is used to display a menu to the user to choose between the 
+different options available. The Instagram data needed is passed as a parameter to the functions.
+
+Functions:
+- create_following_df(path_input, instagram_data): Creates a DataFrame from the following.json file.
+- create_follower_df(path_input, instagram_data): Creates a DataFrame from the follower_1.json file.
+- sort_df_time(df): Sorts a DataFrame based on the 'timestamp' column.
+- format_timestamp(timestamps): Formats pandas Series of timestamps to a specific date-time format.
+- first_five_following(df): Retrieves the first five followings from a DataFrame and formats the timestamps.
+- recent_five_following(df): Retrieves the most recent five followings from a DataFrame and formats the timestamps.
+- following_data(instagram_data): Retrieves and displays following data.
+- not_following_back(instagram_data): Displays users who are not following the user back.
+- follow_data(instagram_data): Main function to display menu and handle user input.
+"""
+
 import json
-import pandas as pd
 import datetime
+import pandas as pd
 import main
 
 
@@ -95,7 +120,8 @@ def following_data(instagram_data):
     """
     Retrieves and displays following data.
 
-    Asks for the path to the 'following.json' file and displays the first five and most recent five followings.
+    Asks for the path to the 'following.json' file and displays 
+    the first five and most recent five followings.
     """
     follower_df = create_following_df(instagram_data.following_path, instagram_data)
     print(first_five_following(follower_df))
