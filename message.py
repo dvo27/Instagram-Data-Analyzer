@@ -24,6 +24,7 @@ from collections import Counter
 import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
+import instagram_data_class as ig_data
 import main
 
 
@@ -68,7 +69,8 @@ def plot_message_distribution_graph(df: pd.DataFrame):
     plt.figure(figsize=(8, 8))
     df["sender_name"].value_counts().plot(kind='pie', autopct='%1.2f%%', shadow=True,
                                           fontsize=15.0, title='Percentage of sent texts in conversation')
-    plt.show()
+    with plt.ion():
+        plt.show(block=False)
 
 
 def plot_message_heatmap(df: pd.DataFrame):
@@ -106,8 +108,8 @@ def plot_message_heatmap(df: pd.DataFrame):
     cmap.set_bad(color="gray")
     sns.heatmap(df_heat2, cmap=cmap, mask=df_heat2.isnull(), annot=True, fmt='g')
     plt.title('Number of Texts Per Hour Each Month', size=14)
-    plt.show()
-
+    with plt.ion():
+        plt.show(block=False)
 
 def plot_message_time_series(df: pd.DataFrame):
     """
@@ -116,7 +118,8 @@ def plot_message_time_series(df: pd.DataFrame):
     """
     time_data = df.copy()
     time_data.dropna(inplace=True)
-    time_data.drop(["share", "reactions", "photos", "audio_files", "videos"], axis=1, inplace=True, errors='ignore')
+    time_data.drop(["share", "reactions", "photos", "audio_files", "videos"], 
+                   axis=1, inplace=True, errors='ignore')
     time_data['date'] = pd.to_datetime(df.timestamp_ms).dt.date
     daily_counts = time_data.groupby('date').size()
 
@@ -128,12 +131,15 @@ def plot_message_time_series(df: pd.DataFrame):
     plt.title('Number of Messages Sent Each Day')
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.show()
+    with plt.ion():
+        plt.show(block=False)
 
 
 def filter_msg_content(df: pd.DataFrame):
     """
-    Creates new DF skipping action messages, returning the messages while skipping over all NotANumber values
+    Creates new DF skipping action messages, returning the messages while 
+    skipping over all NotANumber values
+
     :param df: A Pandas Dataframe of an Instagram direct message JSON file
     :return: Column of only the messages from the dataframe
     """
@@ -199,7 +205,7 @@ def get_first_five_messages(df: pd.DataFrame):
     return f'\nYour First Five Messages: \n{reversed_filtered_df_head}\n'
 
 
-def message_data():
+def message_data(instagram_data: ig_data.InstagramData):
     """
     Prompts the user to input a file path to a message JSON file and presents
     corresponding data visualizations
@@ -207,22 +213,34 @@ def message_data():
     print('\nWelcome To The Message Data Section!')
     print('------------------------------------')
     print('To return to the main menu please type "return"')
-    try:
-        file_path = input('\nPlease enter the path to a file in /messages/inbox/ ending in .json: \n')
-        if file_path != 'return' and file_path.endswith('.json'):
-            df = create_msg_df(file_path)
-            print(five_most_common_words(df))
-            print(get_first_five_messages(df))
-            print(get_message_df_length(df))
-            plot_message_distribution_graph(df)
-            plot_message_heatmap(df)
-            plot_message_time_series(df)
-            message_data()
-        else:
-            print()
-            main.main()
-    except (FileNotFoundError, json.JSONDecodeError):
-        print('\nERROR: The given file path does not exist or is not a valid path')
-        print('Please check the inputted directory path')
+    
 
+    # TODO: find a way to close matplotlib gui after a run of a given message path
+    # TODO: bug when rerunning another message while graph still open
 
+    while True:
+        try:
+            file_path = input('\nPlease enter the path to a .json file in any file located in /messages/inbox: \n')
+            if file_path == 'return':
+                print()
+                main.main(instagram_data)
+                break
+            elif file_path.endswith('.json'):
+                try:
+                    df = create_msg_df(file_path)
+
+                    print(five_most_common_words(df))
+                    print(get_first_five_messages(df))
+                    print(get_message_df_length(df))
+                    plot_message_distribution_graph(df)
+                    plot_message_heatmap(df)
+                    plot_message_time_series(df)
+
+                except (FileNotFoundError, json.JSONDecodeError):
+                    print('\nERROR: The given file path does not exist or is not a valid path')
+                    print('Please check the inputted directory path')
+            else:
+                print('\nERROR: Invalid input. Please enter a valid path ending with .json or type "return" to go back to the main menu.')
+
+        except Exception as e:
+            print(f'\nAn unexpected error occurred: {e}')

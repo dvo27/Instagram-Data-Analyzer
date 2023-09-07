@@ -26,6 +26,7 @@ Functions:
 import json
 import datetime
 import pandas as pd
+import instagram_data_class as ig_data
 import main
 
 
@@ -150,7 +151,7 @@ def not_following_back(instagram_data):
     print(non_follow_back_df)
 
 
-def follow_data(instagram_data):
+def follow_data(instagram_data: ig_data.InstagramData):
     print('\nWelcome To The Follow Data Section!')
     print('------------------------------------')
     menu_choice = input('\nPlease choose an option below!:'
@@ -169,4 +170,4 @@ def follow_data(instagram_data):
             print('ERROR: Invalid choice, please try again')
             follow_data(instagram_data)
     print()
-    main.main()
+    main.main(instagram_data)

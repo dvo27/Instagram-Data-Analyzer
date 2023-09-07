@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import main
+import instagram_data_class as ig_data
 
 
 def create_post_df(path_input, instagram_data):
@@ -15,7 +16,7 @@ def create_post_df(path_input, instagram_data):
         print(f'ERROR: {error}')
 
 
-def comment_menu(instagram_data):
+def comment_menu(instagram_data: ig_data.InstagramData):
     print('\nWelcome To The Comment Data Section!')
     print('------------------------------------')
     menu_choice = input('\nPlease choose an option below!:'
@@ -38,4 +39,4 @@ def comment_menu(instagram_data):
             print('ERROR: Invalid choice, please try again')
             comment_menu(instagram_data)
     print()
-    main.main()
+    main.main(instagram_data)

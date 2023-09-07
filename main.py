@@ -1,96 +1,33 @@
 """
-This module provides a way to work with Instagram data.
+This module facilitates the interaction with and analysis of Instagram data.
 
-It includes the class 'InstagramData' to handle the Instagram data files (post comments, followers, 
-following, liked comments, and liked posts) and their paths, as well as a function 'test_and_init' 
-to initialize the InstagramData object and check the file paths, and a 'main' function that prompts 
-the user to either get direct messages with a specific user, get follow data, or quit the program.
+It leverages the InstagramData class to initialize and manage paths pertaining to various 
+elements of Instagram data including post comments, followers, followings, liked comments, 
+and liked posts. The module offers functions to both initialize the InstagramData object 
+with necessary paths and to present a user menu for diverse data retrieval and analysis operations.
 
 Classes:
-    InstagramData: A class to represent the Instagram data.
+    InstagramData: A class housed in the 'instagram_data_class' module, utilized here to represent
+    and manage the Instagram data paths and file operations.
 
 Functions:
-    test_and_init(): Initializes the InstagramData object and checks the file paths.
-    main(): Presents a menu to the user and executes the selected option.
+    test_and_init(): Prompts the user to input the primary path of their Instagram data, initializes 
+    an InstagramData object with the given path, further initiates various data paths 
+    (like post comments, followers, etc.), and verifies the existence of these paths. 
+    Returns the initialized InstagramData object.
+    
+    main(instagram_data: ig_data.InstagramData): Facilitates user interaction with the program 
+    through a menu-driven interface. Based on user input, it triggers specific data retrieval 
+    and analysis operations pertaining to messages, follow data, comments, or liked posts, 
+    or exits the program.
 """
 
 import sys
-from pathlib import Path
+import instagram_data_class as ig_data
 import message as msg
 import followers as follow
 import comments as cmt
 
-
-class InstagramData:
-    """
-    A class to represent the Instagram data.
-    
-    Attributes:
-        main_path (str): The main path to the Instagram data.
-        post_comments_path (Path): The path to the post comments JSON file.
-        followers_path (Path): The path to the followers JSON file.
-        following_path (Path): The path to the following JSON file.
-        liked_comments (Path): The path to the liked comments JSON file.
-        liked_posts (Path): The path to the liked posts JSON file.
-    
-    Methods:
-        init_paths(): Initializes the paths for post comments, 
-                      followers, following, liked comments, and liked posts.
-        check_paths(): Checks if the initialized paths exist and raises an 
-                       exception if any path does not exist.
-    """
-
-
-    def __init__(self, main_path) -> None:
-        """
-        Initializes the Instagram_data object with the main path to the Instagram data.
-
-        :param main_path: The main path to the Instagram data.
-        :type main_path: str
-        """
-        self.main_path = main_path
-        self.followers_path = None
-        self.following_path = None
-        self.liked_comments = None
-        self.liked_posts = None
-        self.post_comments = None
-        self.reported_comments = None
-        self.reels_comments = None
-
-
-    def init_paths(self):
-        """
-        Initializes the paths for post comments, followers, 
-        following, liked comments, and liked posts.
-
-        :return: None
-        """
-        self.followers_path = Path(self.main_path + '/followers_and_following/followers_1.json')
-        self.following_path = Path(self.main_path + '/followers_and_following/following.json')
-        self.liked_comments = Path(self.main_path + '/likes/liked_comments.json')
-        self.liked_posts = Path(self.main_path + '/likes/liked_posts.json')
-        self.post_comments = Path(self.main_path + '/comments/post_comments.json')
-        self.reported_comments = Path(self.main_path + '/comments/comments_reported.json')
-        self.reels_comments = Path(self.main_path + '/comments/reels_comments.json')
-
-
-    def check_paths(self):
-        """
-        Checks if the initialized paths exist and raises a FileNotFoundError 
-        if any path does not exist.
-
-        :return: None
-        :raise FileNotFoundError: If any initialized path does not exist.
-        """
-        paths = [self.followers_path, self.following_path, self.liked_comments, self.liked_posts,
-                 self.post_comments, self.reported_comments, self.reels_comments]
-        print()
-        for path in paths:
-            if path and path.exists():
-                print(f"{path} exists.")
-            else:
-                print(f"ERROR: {path} does not exist.")
-                sys.exit()
 
 
 def test_and_init():
@@ -102,15 +39,14 @@ def test_and_init():
     :return: None
     """
     main_path = input('Please put in the path to your Instagram Data: \n')
-    instagram_data_obj = InstagramData(main_path)
+    instagram_data_obj = ig_data.InstagramData(main_path)
     instagram_data_obj.init_paths()
     instagram_data_obj.check_paths()
 
     return instagram_data_obj
 
 
-
-def main():
+def main(instagram_data: ig_data.InstagramData):
     """
     Presents a menu to the user and executes the selected option.
 
@@ -132,25 +68,26 @@ def main():
     menu_choice = input('\nPlease choose an option below!:'
                         '\n[1] : Get DMs With Specific User Data\n'
                         '[2] : Get Follow Data\n'
-                        '[3] : Check Comments & Liked Data\n'
+                        '[3] : Check Comments Data\n'
+                        '[4] : Check Liked Data\n'
                         '[Q] : Quit Program\n'
                         '-------------------------------------\n')
 
     if menu_choice not in valid_options:
         print('\nInvalid option! Please try again.\n')
-        main()
+        main(instagram_data)
     else:
         if menu_choice == '1':
-            msg.message_data()
+            msg.message_data(instagram_data)
         elif menu_choice == '2':
-            follow.follow_data(ig_data)
+            follow.follow_data(instagram_data)
         elif menu_choice == '3':
-            cmt.comment_menu(ig_data)
-        elif menu_choice == 'Q' or 'q':
+            cmt.comment_menu(instagram_data)
+        elif menu_choice in ('Q', 'q'):
             print('\nEnding program...Goodbye!')
             sys.exit()
 
 
 if __name__ == '__main__':
-    ig_data = test_and_init()
-    main()
+    ig_data_obj = test_and_init()
+    main(ig_data_obj)
