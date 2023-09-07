@@ -27,6 +27,7 @@ import instagram_data_class as ig_data
 import message as msg
 import followers as follow
 import comments as cmt
+import liked
 
 
 
@@ -64,7 +65,7 @@ def main(instagram_data: ig_data.InstagramData):
     :return: None
     """
 
-    valid_options = ['1', '2', '3', 'Q', 'q']
+    valid_options = ['1', '2', '3', '4', 'Q', 'q']
     menu_choice = input('\nPlease choose an option below!:'
                         '\n[1] : Get DMs With Specific User Data\n'
                         '[2] : Get Follow Data\n'
@@ -83,6 +84,8 @@ def main(instagram_data: ig_data.InstagramData):
             follow.follow_data(instagram_data)
         elif menu_choice == '3':
             cmt.comment_menu(instagram_data)
+        elif menu_choice == '4':
+            liked.liked_menu(instagram_data)
         elif menu_choice in ('Q', 'q'):
             print('\nEnding program...Goodbye!')
             sys.exit()
