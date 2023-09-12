@@ -47,15 +47,25 @@ def create_post_df(path_input, instagram_data):
         print(f'ERROR: {error}')
 
 
-def first_five_comments(df: pd.DataFrame):
+def first_five_post_comments(df: pd.DataFrame):
     """
     Prints out the five first ever comments the user made with info on
     whose post the comments were under and their dates
 
-    :param df:
-    :return:
+    :param df: Pandas DataFrame of post comments data
     """
+    print('Your First Five Comments: ')
     print(df.head().to_string(index=False))
+
+
+def top_five_accounts(df: pd.DataFrame):
+    """
+    Prints a DataFrame containing the top 5 accounts that the user has
+    commented under and the number of comments under that account
+    :param df: Pandas DataFrame of post comments data
+    """
+    print('Accounts With The Most Comments Under:')
+    print(df['Media Owner'].value_counts().head().to_string())
 
 
 def comment_menu(instagram_data: ig_data.InstagramData):
@@ -70,7 +80,9 @@ def comment_menu(instagram_data: ig_data.InstagramData):
     while menu_choice != 'return':
         df = create_post_df(instagram_data.post_comments, instagram_data)
         if menu_choice == '1':
-            first_five_comments(df)
+            first_five_post_comments(df)
+            print()
+            top_five_accounts(df)
             comment_menu(instagram_data)
         elif menu_choice == '2':
             print('2')

@@ -29,15 +29,6 @@ import followers as follow
 import comments as cmt
 import liked
 
-# TODO: Comment throughout functions in all modules
-
-# comments.py:
-# TODO: Introduce handling for multi file post comments
-
-# message.py:
-# TODO: find a way to close matplotlib gui after a run of a given message path
-# TODO: bug when rerunning another message while graph still open
-
 
 def test_and_init():
     """
