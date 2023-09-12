@@ -36,9 +36,16 @@ def create_msg_df(input_path):
     """
     with open(input_path, encoding='UTF-8') as message_file:
         message_json = json.load(message_file)
+
+    # Enter the actual messages section from JSON data
     messages_dict = message_json['messages']
+
+    # Create DF
     df = pd.DataFrame.from_dict(messages_dict)
+
+    # Convert timestamps from milliseconds
     df['timestamp_ms'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
+
     return df
 
 
@@ -117,9 +124,13 @@ def plot_message_time_series(df: pd.DataFrame):
     :param df: A Pandas Dataframe of an Instagram direct message JSON file
     """
     time_data = df.copy()
+
+    # Drop NaN rows and columns we don't need
     time_data.dropna(inplace=True)
     time_data.drop(["share", "reactions", "photos", "audio_files", "videos"], 
                    axis=1, inplace=True, errors='ignore')
+
+    # Convert date column to datetime & group data by date
     time_data['date'] = pd.to_datetime(df.timestamp_ms).dt.date
     daily_counts = time_data.groupby('date').size()
 
@@ -213,10 +224,7 @@ def message_data(instagram_data: ig_data.InstagramData):
     print('\nWelcome To The Message Data Section!')
     print('------------------------------------')
     print('To return to the main menu please type "return"')
-    
 
-    # TODO: find a way to close matplotlib gui after a run of a given message path
-    # TODO: bug when rerunning another message while graph still open
 
     while True:
         try:
