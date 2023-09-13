@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+from collections import Counter
 import main
 import instagram_data_class as ig_data
 import message
@@ -27,7 +28,7 @@ def create_post_df(path_input, instagram_data):
         df['Media Owner'] = df['Media Owner'].str.get('value')
         df['Time'] = df['Time'].str.get('timestamp')
 
-       # Decoding comments to the correct encoding
+        # Decoding comments to the correct encoding
         df['Comment'] = message.decode_messages(df['Comment'])
 
         # Sort DataFrame by time
@@ -54,8 +55,8 @@ def first_five_post_comments(df: pd.DataFrame):
 
     :param df: Pandas DataFrame of post comments data
     """
-    print('Your First Five Comments: ')
-    print(df.head().to_string(index=False))
+    print('\nYour First Five Comments: ')
+    print(f'{df.head().to_string(index=False)}\n')
 
 
 def top_five_accounts(df: pd.DataFrame):
@@ -81,8 +82,9 @@ def comment_menu(instagram_data: ig_data.InstagramData):
         df = create_post_df(instagram_data.post_comments, instagram_data)
         if menu_choice == '1':
             first_five_post_comments(df)
-            print()
             top_five_accounts(df)
+            print(message.five_most_common_words(df['Comment']))
+            print(f'\nNumber of Comments Made Under Posts:\n{message.get_message_df_length(df["Comment"])}')
             comment_menu(instagram_data)
         elif menu_choice == '2':
             print('2')

@@ -163,28 +163,26 @@ def filter_msg_content(df: pd.DataFrame):
     return content_column
 
 
-def five_most_common_words(df: pd.DataFrame):
+def five_most_common_words(word_column: pd.Series):
     """
     Prints a dataframe with the 5 most common words and their counts.
-    :param df: A Pandas Dataframe of an Instagram direct message JSON file
+    :param word_column: A Pandas Series consisting of words/messages
     """
-    content_column = filter_msg_content(df)
 
     # Creates and prints a list of tuples with the five most common words and their counts
-    common_word_counter = Counter(" ".join(content_column).split()).most_common(5)
+    common_word_counter = Counter(" ".join(word_column).split()).most_common(5)
     common_word_df = pd.DataFrame(common_word_counter, columns=['Word', 'Count'])
     common_word_df = common_word_df.to_string(index=False)
     return f'\nYour Five Most Common Words: \n{common_word_df}'
 
 
-def get_message_df_length(df: pd.DataFrame):
+def get_message_df_length(word_column: pd.Series):
     """
     Get the number of messages sent within a DM conversation.
-    :param df: A Pandas Dataframe of an Instagram direct message JSON file
+    :param word_column: A Pandas Series consisting of words/messages
     :return: F-string containing the amount of messages in a conversation excluding action statements
     """
-    content_column = filter_msg_content(df)
-    return f'\nNumber Of Messages In The Conversation: \n{content_column.size}'
+    return word_column.size
 
 
 def get_first_five_messages(df: pd.DataFrame):
@@ -237,9 +235,10 @@ def message_data(instagram_data: ig_data.InstagramData):
                 try:
                     df = create_msg_df(file_path)
 
-                    print(five_most_common_words(df))
+                    print(five_most_common_words(filter_msg_content(df)))
                     print(get_first_five_messages(df))
-                    print(get_message_df_length(df))
+                    print(f'\nNumber Of Messages In The Conversation: '
+                          f'\n{get_message_df_length(filter_msg_content(df))}')
                     plot_message_distribution_graph(df)
                     plot_message_heatmap(df)
                     plot_message_time_series(df)
