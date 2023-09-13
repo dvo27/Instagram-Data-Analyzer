@@ -1,6 +1,5 @@
 import json
 import pandas as pd
-from collections import Counter
 import main
 import instagram_data_class as ig_data
 import message
@@ -18,8 +17,12 @@ def create_post_df(path_input, instagram_data):
         with open(path_input, encoding='utf-8') as f:
             post_comments_json = json.load(f)
 
-        post_comments_list = [cmt['string_map_data'] for cmt in post_comments_json['comments_media_comments']
-                              if 'Comment' in cmt['string_map_data']]
+        if 'comments_media_comments' in post_comments_json:
+            post_comments_list = [cmt['string_map_data'] for cmt in post_comments_json['comments_media_comments']
+                                  if 'Comment' in cmt['string_map_data']]
+        else:
+            post_comments_list = [cmt['string_map_data'] for cmt in post_comments_json
+                                  if 'Comment' in cmt['string_map_data']]
 
         df = pd.DataFrame(post_comments_list)
 
