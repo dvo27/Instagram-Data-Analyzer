@@ -35,8 +35,6 @@ class InstagramData:
         self.liked_comments = None
         self.liked_posts = None
         self.post_comments = None
-        self.reported_comments = None
-        self.reels_comments = None
 
 
     def init_paths(self):
@@ -51,8 +49,6 @@ class InstagramData:
         self.liked_comments = Path(self.main_path + '/likes/liked_comments.json')
         self.liked_posts = Path(self.main_path + '/likes/liked_posts.json')
         self.post_comments = Path(self.main_path + '/comments/post_comments.json')
-        self.reported_comments = Path(self.main_path + '/comments/comments_reported.json')
-        self.reels_comments = Path(self.main_path + '/comments/reels_comments.json')
 
 
     def check_paths(self):
@@ -64,7 +60,7 @@ class InstagramData:
         :raise FileNotFoundError: If any initialized path does not exist.
         """
         paths = [self.followers_path, self.following_path, self.liked_comments, self.liked_posts,
-                 self.post_comments, self.reported_comments, self.reels_comments]
+                 self.post_comments]
         print()
         for path in paths:
             if path and path.exists():

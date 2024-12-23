@@ -34,19 +34,22 @@ def create_msg_df(input_path):
     :param input_path: A Path object of a path to a message JSON file
     :return: A dataframe containing information in the message JSON file
     """
-    with open(input_path, encoding='UTF-8') as message_file:
-        message_json = json.load(message_file)
+    try:
+        with open(input_path, encoding='UTF-8') as message_file:
+            message_json = json.load(message_file)
 
-    # Enter the actual messages section from JSON data
-    messages_dict = message_json['messages']
+        # Enter the actual messages section from JSON data
+        messages_dict = message_json['messages']
 
-    # Create DF
-    df = pd.DataFrame.from_dict(messages_dict)
+        # Create DF
+        df = pd.DataFrame.from_dict(messages_dict)
 
-    # Convert timestamps from milliseconds
-    df['timestamp_ms'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
+        # Convert timestamps from milliseconds
+        df['timestamp_ms'] = pd.to_datetime(df['timestamp_ms'], unit='ms')
 
-    return df
+        return df
+    except (AttributeError, TypeError) as error:
+        print(f'ERROR: {error}')
 
 
 def decode_messages(messages: pd.Series):

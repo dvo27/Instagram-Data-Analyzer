@@ -43,8 +43,8 @@ def create_following_df(path_input, instagram_data):
                                for f in following_json['relationships_following']]
         df = pd.DataFrame(following_data_list)
         return df
-    except (AttributeError, TypeError) as f:
-        print(f'\nERROR: {f}')
+    except (AttributeError, TypeError) as error:
+        print(f'\nERROR: {error}')
         print('\nERROR: Please place the following.json file located in the followers_and_following folder')
         follow_data(instagram_data)
 
