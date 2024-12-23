@@ -28,7 +28,7 @@ import instagram_data_class as ig_data
 import main
 
 
-def create_msg_df(input_path):
+def create_msg_df(input_path) -> pd.DataFrame:
     """
     Loads JSON from path and creates a dataframe from message section of JSON
     :param input_path: A Path object of a path to a message JSON file
@@ -52,7 +52,7 @@ def create_msg_df(input_path):
         print(f'ERROR: {error}')
 
 
-def decode_messages(messages: pd.Series):
+def decode_messages(messages: pd.Series) -> pd.Series:
     """
     Decode words from their original encoding to UTF-8.
     :param messages: Series containing the messages to be decoded
@@ -62,7 +62,7 @@ def decode_messages(messages: pd.Series):
     return decoded_messages
 
 
-def plot_message_distribution_graph(df: pd.DataFrame):
+def plot_message_distribution_graph(df: pd.DataFrame) -> None:
     """
     Plots a pie chart showing the distribution of chats sent between each participant
     of a direct message conversation
@@ -83,7 +83,7 @@ def plot_message_distribution_graph(df: pd.DataFrame):
         plt.show(block=False)
 
 
-def plot_message_heatmap(df: pd.DataFrame):
+def plot_message_heatmap(df: pd.DataFrame) -> None:
     """
     Plots a heatmap showing the number of messages sent between each hour of the day
     across all months of a year
@@ -121,7 +121,7 @@ def plot_message_heatmap(df: pd.DataFrame):
     with plt.ion():
         plt.show(block=False)
 
-def plot_message_time_series(df: pd.DataFrame):
+def plot_message_time_series(df: pd.DataFrame) -> None:
     """
     Plots a time series graph of the number of messages sent per day across chat history
     :param df: A Pandas Dataframe of an Instagram direct message JSON file
@@ -149,7 +149,7 @@ def plot_message_time_series(df: pd.DataFrame):
         plt.show(block=False)
 
 
-def filter_msg_content(df: pd.DataFrame):
+def filter_msg_content(df: pd.DataFrame) -> pd.DataFrame:
     """
     Creates new DF skipping action messages, returning the messages while 
     skipping over all NotANumber values
@@ -166,7 +166,7 @@ def filter_msg_content(df: pd.DataFrame):
     return content_column
 
 
-def five_most_common_words(word_column: pd.Series):
+def five_most_common_words(word_column: pd.Series) -> str:
     """
     Prints a dataframe with the 5 most common words and their counts.
     :param word_column: A Pandas Series consisting of words/messages
@@ -179,7 +179,7 @@ def five_most_common_words(word_column: pd.Series):
     return f'\nYour Five Most Common Words: \n{common_word_df}'
 
 
-def get_message_df_length(word_column: pd.Series):
+def get_message_df_length(word_column: pd.Series) -> int:
     """
     Get the number of messages sent within a DM conversation.
     :param word_column: A Pandas Series consisting of words/messages
