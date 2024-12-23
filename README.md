@@ -30,6 +30,8 @@ pip install matplotlib
 Please choose an option below!:
 [1] : Get DMs With Specific User Data
 [2] : Get Follow Data
+[3] : Check Comments Data
+[4] : Check Liked Data
 [Q] : Quit Program
 -------------------------------------
 ```
@@ -44,7 +46,7 @@ To return to the main menu please type "return"
 Please enter the path to a file in /messages/inbox/ ending in .json: 
 ```
 
-### Follow Up
+### Follow Data Menu
 ```
 Welcome To The Follow Data Section!
 ------------------------------------
@@ -52,6 +54,30 @@ Welcome To The Follow Data Section!
 Please choose an option below!:
 [1] : Get Following Data
 [2] : Check Who Isn't Following You Back
+
+[return] : Return to main menu
+-------------------------------------
+```
+
+### Comment Data Menu
+```
+Please choose an option below!:
+[1] : See Post Comments Data
+[2] : See Reported Comments Data
+[3] : See Reels Comments Data
+
+[return] : Return to main menu
+-------------------------------------
+```
+
+### Liked Data Menu
+```
+Welcome To The Liked Data Section!
+------------------------------------
+
+Please choose an option below!:
+[1] : Check Liked Comments Data
+[2] : Check Liked Posts Data
 
 [return] : Return to main menu
 -------------------------------------
