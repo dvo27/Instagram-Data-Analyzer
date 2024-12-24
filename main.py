@@ -30,7 +30,7 @@ import comments as cmt
 import liked
 
 
-def path_test_and_init():
+def path_test_and_init(main_path: str):
     """
     Prompts the user for the main path to their Instagram data, initializes an InstagramData object 
     with the provided path, initializes the paths for post comments, followers, following, 
