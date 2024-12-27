@@ -44,11 +44,11 @@ class InstagramData:
 
         :return: None
         """
-        self.followers_path = Path(self.main_path + '/followers_and_following/followers_1.json')
-        self.following_path = Path(self.main_path + '/followers_and_following/following.json')
-        self.liked_comments = Path(self.main_path + '/likes/liked_comments.json')
-        self.liked_posts = Path(self.main_path + '/likes/liked_posts.json')
-        self.post_comments = Path(self.main_path + '/comments/post_comments.json')
+        self.followers_path = Path(self.main_path + '/connections/followers_and_following/followers_1.json')
+        self.following_path = Path(self.main_path + '/connections/followers_and_following/following.json')
+        self.liked_comments = Path(self.main_path + '/your_instagram_activity/likes/liked_comments.json')
+        self.liked_posts = Path(self.main_path + '/your_instagram_activity/likes/liked_posts.json')
+        self.post_comments = Path(self.main_path + '/your_instagram_activity/comments/post_comments_1.json')
 
 
     def check_paths(self):

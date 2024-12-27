@@ -29,8 +29,11 @@ import followers as follow
 import comments as cmt
 import liked
 
+# I should add menu with choice where files might look diff
 
-def path_test_and_init(main_path: str):
+
+
+def path_test_and_init():
     """
     Prompts the user for the main path to their Instagram data, initializes an InstagramData object 
     with the provided path, initializes the paths for post comments, followers, following, 
